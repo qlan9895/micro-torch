@@ -41,6 +41,8 @@ class NeuralNetwork:
         loss = 0.5 * np.mean((y - y_pred) ** 2)
         return loss
     
+    def  cross_entropy_loss(self, y):
+        y_pred = 
     # Back propagation implementation
     # We first reverse the post_forward_pass list and then we compute the gradient for each layer using chain rule
     def backward(self, y, x):
