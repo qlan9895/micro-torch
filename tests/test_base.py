@@ -32,3 +32,14 @@ def test_matmal():
     assert a.grad is not None and a.grad.shape == (3, 2)
     assert b.grad is not None and b.grad.shape == (2, 3)
 
+def test_sub():
+    x = Tensor(np.array([1.0, 2.0]),require_grad=True)
+    y = Tensor(np.array([3.0, 4.0]), require_grad=True)
+    c = x - y
+    c.backward()
+    assert isinstance(c, Tensor)
+    assert c.op == "__sub__"
+    assert np.allclose(c.data, np.array([-2.0, -2.0]))
+    assert x.grad is not None and np.allclose(x.grad, np.array([1.0, 1.0]))
+    assert y.grad is not None and np.allclose(y.grad, np.array([-1.0, -1.0]))
+    print(f'x_grad:{x.grad}, y_grad:{y.grad}')

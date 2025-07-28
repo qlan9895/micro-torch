@@ -1,5 +1,8 @@
 import numpy as np
+from core.base import Tensor
+from core.functional import F
 
+## TO DO: make it operate on Tensor class
 class LossF:
 
     @staticmethod

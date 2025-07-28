@@ -20,12 +20,12 @@ class Tensor:
 		result._prev = (self, other)
 		def _backward():
 			if self.require_grad == True:
-				if self.grad == None:
+				if self.grad is None:
 					self.grad = result.grad
 				else:
 					self.grad = self.grad + result.grad
 			if other.require_grad == True:
-				if other.grad == None:
+				if other.grad is None:
 					other.grad = result.grad
 				else:
 					other.grad = other.grad + result.grad
@@ -40,12 +40,12 @@ class Tensor:
 		result._prev = (self, other)
 		def _backward():
 			if self.require_grad == True:
-				if self.grad == None:
+				if self.grad is None:
 					self.grad = result.grad @ other.data.T
 				else:
 					self.grad = self.grad + result.grad @ other.data.T
 			if other.require_grad == True:
-				if other.grad == None:
+				if other.grad is None:
 					other.grad = self.data.T @ result.grad
 				else:
 					other.grad = other.grad + self.data.T @ result.grad
@@ -59,29 +59,48 @@ class Tensor:
 		result._prev = (self, other)
 		def _backward():
 			if self.require_grad == True:
-				if self.grad == None:
+				if self.grad is None:
 					self.grad = other.data * result.grad
 				else:
 					self.grad = self.grad + other.data * result.grad
 			if other.require_grad == True:
-				if other.grad == None:
+				if other.grad is None:
 					other.grad = self.data * result.grad
 				else:
 					other.grad = other.grad + self.data * result.grad
 		result._backward = _backward
 		return result
 
-	# Traverse the Tensor._prev from the current note. The data structure here is a DAG
+	def __sub__(self, other):
+		result = Tensor(self.data - other.data,
+			require_grad = self.require_grad or other.require_grad,
+			op = "__sub__")
+		result._prev = (self, other)
+		def _backward():
+			if self.require_grad == True:
+				if self.grad is None:
+					self.grad = result.grad
+				else:
+					self.grad += result.grad
+			if other.require_grad == True:
+				if other.grad is None:
+					other.grad = - result.grad
+				else:
+					other.grad += - result.grad
+		result._backward = _backward
+		return result
+
+	# Traverse the Tensor._prev from the current node. The data structure here is a DAG. Given an expression, we can generate a topology based on the expression.
 	def backward(self):
-		if self.grad == None:
+		if self.grad is None:
 			self.grad = np.ones_like(self.data)
 		visited = set()
 		traversed_order = []
-		# for C = A * B + A, we have visited = {A, B, C} and topo = [A, B, A * B, C], this is a resemblance to topology, where arbitrary union and finite intersection are all in the set
+		# for C = A * B + A, we have visited = {A, B, C} and topo = [A, B, A * B, C], this is a resemblance to topology.
 		def build_order(tensor):
 			if tensor not in visited:
 				visited.add(tensor)
-				if tensor._prev != None:
+				if tensor._prev is not None:
 					for child in tensor._prev:
 						build_order(child)
 				traversed_order.append(tensor)
