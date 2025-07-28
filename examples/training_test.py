@@ -72,8 +72,8 @@ def train():
 
 def feed_picture():
     # Pick an image from the test set
-    img = X_test[:, 10]              # shape (784,)
-    label = y_test[:, 10]            # one-hot vector
+    img = X_test[:, 255]              # shape (784,)
+    label = y_test[:, 255]            # one-hot vector
 
     # Show image
     plt.imshow(img.reshape(28, 28), cmap='gray')
