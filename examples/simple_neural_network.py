@@ -1,21 +1,22 @@
-from core.Layer import Layer, F
-from core.Loss import LossF
+from core.linear import Linear
+from core.functional import F
+from core.base import Tensor
 import numpy as np
 
 class NeuralNetwork():
 
     def __init__(self, output_dim, input_dim, hidden_size):
-        self.l1 = Layer(hidden_size, input_dim)
-        self.l2 = Layer(hidden_size, hidden_size)
-        self.l3 = Layer(output_dim, hidden_size)
+        self.l1 = Linear(hidden_size, input_dim)
+        self.l2 = Linear(hidden_size, hidden_size)
+        self.l3 = Linear(output_dim, hidden_size)
     
     # Implementation of forward pass: post_* should represent the activation value after an Linear layer
     # dim(x) = input_dim * batch_size
     def forward(self, x): 
-        self.a1 = F.relu(self.l1(x))
-        self.a2 = F.relu(self.l2(self.a1))
-        self.a3 = F.softmax(self.l3(self.a2)) #dim(a3) = output_dim * batch_size
-        return self.a3
+        a1 = F.relu(self.l1(x))
+        a2 = F.relu(self.l2(a1))
+        a3 = F.softmax(self.l3(a2))
+        return a3
     
     # Implementation of backward pass: 
 

@@ -7,4 +7,6 @@ def test_linear():
     l1 = Linear(4, 3)
     l2 = l1(x)
     assert l2.data.shape == (4, 3)
-    print(l2)
+    l2.backward()
+    print(l1.W.grad)
+    print(l1.b.grad)

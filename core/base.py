@@ -20,15 +20,16 @@ class Tensor:
 		result._prev = (self, other)
 		def _backward():
 			if self.require_grad == True:
-				if self.grad is None:
-					self.grad = result.grad
+				# Handle broadcasting: e.g. when Y = W @ X + B
+				if self.data.shape == result.data.shape:
+					self.grad = self.grad + result.grad if self.grad is not None else result.grad
 				else:
-					self.grad = self.grad + result.grad
+					self.grad = self.grad + np.sum(result.grad, axis=1, keepdims=True) if self.grad is not None else np.sum(result.grad, axis=1, keepdims=True)
 			if other.require_grad == True:
-				if other.grad is None:
-					other.grad = result.grad
+				if other.data.shape == result.data.shape:
+					other.grad = other.grad + result.grad if other.grad is not None else result.grad
 				else:
-					other.grad = other.grad + result.grad
+					other.grad = other.grad + np.sum(result.grad, axis=1, keepdims=True) if other.grad is not None else np.sum(result.grad, axis=1, keepdims=True)	
 		result._backward = _backward
 		return result
 
@@ -104,6 +105,7 @@ class Tensor:
 					for child in tensor._prev:
 						build_order(child)
 				traversed_order.append(tensor)
+
 		build_order(self)
 		for t in reversed(traversed_order):
 			t._backward()

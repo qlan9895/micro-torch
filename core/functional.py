@@ -103,20 +103,21 @@ class F:
     def cross_entropy(v: Tensor, v_pred: Tensor) -> Tensor:
         data_list = []
         for i in range(v.data.shape[1]):
-            inner = np.dot(v.data[:,i:i+1], np.log(v_pred.data[:,i:i+1].T))
+            inner = np.dot(v.data[:,i:i+1].T, np.log(v_pred.data[:,i:i+1]))
             data_list.append(inner)
-        data = np.sum(data_list)
+        data = - np.sum(data_list)
         result = Tensor(data, require_grad = v.require_grad or v_pred.require_grad, op='cross_entropy')
         result._prev = (v_pred, v)
         def _backward():
             if v_pred.require_grad == True:
                 if v_pred.op == 'softmax':
+                    v_pred._backward = lambda: None # Since by calling loss.backward(), softmax is already in the DAG, so we need to short-circuit it. 
                     logits = v_pred._prev[0] # Returns a Tensor, this Tensor was fed into softmax
                     if logits.grad is None:
                         logits.grad = (v_pred.data - v.data) * result.grad
                     else:
                         logits.grad += (v_pred.data - v.data) * result.grad
-                    v_pred._backward = lambda: None # Since by calling loss.backward(), softmax is already in the DAG, so we need to short-circuit it. 
+                     
                 ### TO DO: implement the backward step when v_pred.op is not 'softmax'
                 ### Code Here
         result._backward = _backward
