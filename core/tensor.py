@@ -1,4 +1,3 @@
-from ast import Tuple
 import numpy as np
 
 # Auto-grad implementation
@@ -20,10 +19,10 @@ class Tensor:
 		result._prev = (self, other)
 		def _backward():
 			if self.require_grad == True:
-				# Handle broadcasting: e.g. when Y = W @ X + B
 				if self.data.shape == result.data.shape:
 					self.grad = self.grad + result.grad if self.grad is not None else result.grad
 				else:
+					# Handle broadcasting
 					self.grad = self.grad + np.sum(result.grad, axis=1, keepdims=True) if self.grad is not None else np.sum(result.grad, axis=1, keepdims=True)
 			if other.require_grad == True:
 				if other.data.shape == result.data.shape:
@@ -53,6 +52,7 @@ class Tensor:
 		result._backward = _backward
 		return result
 
+	# Elementwise matrix multiplication
 	def __mul__(self, other):
 		result = Tensor(self.data * other.data,
 			require_grad = self.require_grad or other.require_grad,
@@ -60,18 +60,20 @@ class Tensor:
 		result._prev = (self, other)
 		def _backward():
 			if self.require_grad == True:
-				if self.grad is None:
-					self.grad = other.data * result.grad
+				# Handle broadcasting
+				if self.data.shape == other.data.shape:
+					self.grad = self.grad + other.data * result.grad if self.grad is not None else other.data * result.grad
 				else:
-					self.grad = self.grad + other.data * result.grad
+					self.grad = self.grad + np.sum(other.data * result.grad, axis=1, keepdims=True) if self.grad is not None else np.sum(other.data * result.grad, axis=1, keepdims=True)
 			if other.require_grad == True:
-				if other.grad is None:
-					other.grad = self.data * result.grad
+				if other.data.shape == self.data.shape:
+					other.grad = other.grad + self.data * result.grad if other.grad is not None else self.data * result.grad
 				else:
-					other.grad = other.grad + self.data * result.grad
+					other.grad = other.grad + np.sum(self.data * result.grad, axis=1, keepdims=True) if other.grad is not None else np.sum(self.data * result.grad, axis=1, keepdims=True)
 		result._backward = _backward
 		return result
 
+	#Subtraction
 	def __sub__(self, other):
 		result = Tensor(self.data - other.data,
 			require_grad = self.require_grad or other.require_grad,
@@ -112,3 +114,7 @@ class Tensor:
 
 	def __repr__(self):
 		return f"Tensor(data={self.data}, require_grad={self.require_grad})"
+	
+	def is_leaf(self):
+		self._leaf = True if len(self._prev) == 0 else False
+		return self._leaf

@@ -1,6 +1,6 @@
 import numpy as np
 from core.functional import F
-from core.base import Tensor
+from core.tensor import Tensor
 
 def test_sigmoid():
     v = Tensor(np.array([[1.0, 1.0], [0.0, 1.0]]), require_grad=True)

@@ -1,4 +1,4 @@
-from core.base import Tensor
+from core.tensor import Tensor
 import numpy as np
 
 class F:
