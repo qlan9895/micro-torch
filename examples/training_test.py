@@ -1,9 +1,9 @@
 import numpy as np
 from tensorflow.keras.datasets import mnist
-from core.tensor import Tensor
-from core.functional import F
+from microtorch.core.tensor import Tensor
+from microtorch.core.functional import F
 from neural_network import NeuralNetwork
-from core.optimizer import Optimizer
+from microtorch.core.optimizer import Optimizer
 
 input_dim = 784
 output_dim = 10

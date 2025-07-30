@@ -1,6 +1,6 @@
-from core.tensor import Tensor
+from microtorch.core.tensor import Tensor
 import numpy as np
-from core.linear import Linear
+from microtorch.core.linear import Linear
 
 def test_linear():
     x = np.array([[1.0, 1.0, 2.0], [0.5, 1.0, 1.0], [3.0, 1.0, 1.0]])

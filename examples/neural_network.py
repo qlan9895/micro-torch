@@ -1,7 +1,7 @@
-from core.tensor import Tensor
-from core.linear import Linear
-from core.module import Module
-from core.functional import F
+from microtorch.core.tensor import Tensor
+from microtorch.core.linear import Linear
+from microtorch.core.module import Module
+from microtorch.core.functional import F
 
 # Neural Network for MINST dataset
 class NeuralNetwork(Module):

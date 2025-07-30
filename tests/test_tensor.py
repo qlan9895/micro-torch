@@ -1,5 +1,5 @@
 import numpy as np
-from core.tensor import Tensor
+from microtorch.core.tensor import Tensor
 
 def test_add():
     x = Tensor(np.array([1.0, 2.0]),require_grad=True)

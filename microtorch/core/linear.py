@@ -1,7 +1,7 @@
 import numpy as np
-from core.tensor import Tensor
-from core.functional import F
-from core.module import Module
+from .tensor import Tensor
+from .functional import F
+from .module import Module
 
 # This is mainly for optimizer to grab parameters need to be updated. 
 
