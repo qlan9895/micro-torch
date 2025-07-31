@@ -32,7 +32,18 @@ Base class for a basic linear layer, a neural network etc. Can track its paramet
 - `get_params()` will return a list of Tensors that are updateable parameters.
 
 #### F
-Stateless functions that don't need to store any parameters. Operates on Tensor and returns a Tensor. All activation function and loss function belong to this. Also have `_backward` that get called during backward pass
+Stateless functions. Operates on Tensor and returns a Tensor. All activation function and loss function belong to this. Also have `_backward` that get called during backward pass
 
 #### Linear
-A linear layer that represent `nn.linear`. Basically W @ X + b
+Represent a linear layer in a neural network. A subclass of Module. Will initialize a weight Tensor with dimension (output_dim, input_dim). Have a `forward` method. 
+
+#### Optimizer
+Mount on Module class. Have two inputs: `lr` and `parameters`. Can reset gradients and update gradients. 
+
+## Usage
+See `\examples`
+
+## To do:
+- broadcast support: for __sub__
+- Metal acceleration
+- More Tensors operations: `concat`, `flatten` etc.
