@@ -43,3 +43,13 @@ def test_sub():
     assert x.grad is not None and np.allclose(x.grad, np.array([1.0, 1.0]))
     assert y.grad is not None and np.allclose(y.grad, np.array([-1.0, -1.0]))
     print(f'x_grad:{x.grad}, y_grad:{y.grad}')
+
+def test_split():
+    x = Tensor(np.array([[1.0, 1.0], 
+                        [2.0, 3.0]]), require_grad=True)
+    a, b = x.split(1)
+    c = a + b
+    c.backward()
+    assert np.allclose(c.data, np.array([[2.0], [5.0]]))
+    assert np.allclose(c.grad, np.array([[1.0], [1.0]]))
+    assert np.allclose(x.grad, np.array(([1.0, 1.0], [1.0, 1.0])))
